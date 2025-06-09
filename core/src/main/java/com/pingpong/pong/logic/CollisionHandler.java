@@ -11,6 +11,10 @@ public class CollisionHandler {
         // Verifica se o círculo da bola colide com o retângulo da raquete
         if (Intersector.overlaps(ball.bounds, paddle.bounds)) {
             ball.reverseX();
+
+            if (ball.velocity.len() < Constants.MAX_BALL_SPEED) {
+                ball.velocity.scl(Constants.BALL_SPEED_INCREASE_FACTOR); // Multiplica o vetor de velocidade pelo fator
+            }
         }
     }
 
