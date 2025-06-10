@@ -10,7 +10,7 @@ public abstract class Ball {
 
     public Ball(float x, float y, float radius) {
         bounds = new Circle(x, y, radius);
-        velocity = new Vector2(); // A velocidade será definida pelas classes filhas
+        velocity = new Vector2();
     }
 
     public void update(float delta) {

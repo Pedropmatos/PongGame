@@ -14,6 +14,9 @@ import com.pingpong.pong.logic.CollisionHandler;
 import com.pingpong.pong.logic.DefaultBallFactory;
 import com.pingpong.pong.logic.FastBallFactory;
 import com.pingpong.pong.utils.Constants;
+import com.pingpong.pong.logic.GameScore;
+import com.pingpong.pong.logic.ScoreDisplay;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 public class GameScreen implements Screen {
     ShapeRenderer shapeRenderer;
@@ -24,8 +27,12 @@ public class GameScreen implements Screen {
     BitmapFont font;
     BallFactory ballFactory;
 
-    int scorePlayer1 = 0;
-    int scorePlayer2 = 0;
+    GameScore gameScore;
+    ScoreDisplay scoreDisplay;
+
+    private boolean gameOver;
+    private String winnerMessage;
+    private GlyphLayout layout;
 
     @Override
     public void show() {
@@ -41,6 +48,14 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.getData().setScale(2);
+
+        gameScore = new GameScore();
+        scoreDisplay = new ScoreDisplay(batch, font);
+        gameScore.addObserver(scoreDisplay);
+
+        gameOver = false;
+        winnerMessage = "";
+        layout = new GlyphLayout();
     }
 
     @Override
@@ -68,17 +83,30 @@ public class GameScreen implements Screen {
         player2.render(shapeRenderer);
 
         shapeRenderer.setColor(1, 1, 1, 1);
-        ball.render(shapeRenderer);
+
+        if (!gameOver) {
+            ball.render(shapeRenderer);
+        }
 
         shapeRenderer.end();
 
-        batch.begin();
-        font.draw(batch, String.valueOf(scorePlayer1), Constants.SCREEN_WIDTH / 4f, Constants.SCREEN_HEIGHT - 20);
-        font.draw(batch, String.valueOf(scorePlayer2), Constants.SCREEN_WIDTH * 3 / 4f, Constants.SCREEN_HEIGHT - 20);
-        batch.end();
+        scoreDisplay.render();
+
+
+        if (gameOver) {
+            batch.begin();
+            layout.setText(font, winnerMessage);
+            float textWidth = layout.width;
+            font.draw(batch, winnerMessage, Constants.SCREEN_WIDTH / 2f - textWidth / 2f, Constants.SCREEN_HEIGHT / 2f);
+            batch.end();
+        }
     }
 
     public void update(float delta) {
+        if (gameOver) {
+            return;
+        }
+
         boolean upP1 = Gdx.input.isKeyPressed(Keys.W);
         boolean downP1 = Gdx.input.isKeyPressed(Keys.S);
         player1.update(delta, upP1, downP1);
@@ -97,29 +125,29 @@ public class GameScreen implements Screen {
         CollisionHandler.handleBallWallCollision(ball);
 
         if (ball.bounds.x - ball.bounds.radius <= 0) {
-            scorePlayer2++;
-            resetBall();
+            gameScore.player2Scores();
+            checkWinCondition();
+            if (!gameOver) {
+                resetBall();
+            }
         } else if (ball.bounds.x + ball.bounds.radius >= Constants.SCREEN_WIDTH) {
-            scorePlayer1++;
-            resetBall();
+            gameScore.player1Scores();
+            checkWinCondition();
+            if (!gameOver) {
+                resetBall();
+            }
         }
     }
 
     private void clampPaddleToScreen(Paddle paddle) {
-        if (paddle.bounds.x < 0) paddle.bounds.x = 0;
-        if (paddle.bounds.x + paddle.bounds.width > Constants.SCREEN_WIDTH)
-            paddle.bounds.x = Constants.SCREEN_WIDTH - paddle.bounds.width;
-
         if (paddle.bounds.y < 0) paddle.bounds.y = 0;
         if (paddle.bounds.y + paddle.bounds.height > Constants.SCREEN_HEIGHT)
             paddle.bounds.y = Constants.SCREEN_HEIGHT - paddle.bounds.height;
     }
 
     private void resetBall() {
-
         ball = ballFactory.createBall(Constants.SCREEN_WIDTH / 2f, Constants.SCREEN_HEIGHT / 2f, Constants.BALL_RADIUS);
 
-        // Opcional: se você ainda quiser uma direção aleatória para a nova bola, pode fazer assim:
         if (Math.random() < 0.5) {
             ball.reverseX();
         }
@@ -128,19 +156,29 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void checkWinCondition() {
+        if (gameScore.getPlayer1Score() >= Constants.MAX_SCORE) {
+            gameOver = true;
+            winnerMessage = "Player 1 Wins!";
+        } else if (gameScore.getPlayer2Score() >= Constants.MAX_SCORE) {
+            gameOver = true;
+            winnerMessage = "Player 2 Wins!";
+        }
+    }
+
     @Override
     public void resize(int width, int height) {
-        // Pode deixar vazio por enquanto
+
     }
 
     @Override
     public void pause() {
-        // Pode deixar vazio por enquanto
+
     }
 
     @Override
     public void resume() {
-        // Pode deixar vazio por enquanto
+
     }
 
     @Override

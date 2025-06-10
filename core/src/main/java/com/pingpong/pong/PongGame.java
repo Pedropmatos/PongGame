@@ -8,7 +8,7 @@ import com.pingpong.pong.screens.GameScreen; // A importação agora deve funcio
 public class PongGame extends Game {
     @Override
     public void create() {
-        // A criação da tela agora é muito mais simples
+
         this.setScreen(new GameScreen());
     }
 }
