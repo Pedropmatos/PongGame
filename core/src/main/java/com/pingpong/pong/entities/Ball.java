@@ -4,13 +4,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 
-public class Ball {
+public abstract class Ball {
     public Circle bounds;
     public Vector2 velocity;
 
     public Ball(float x, float y, float radius) {
         bounds = new Circle(x, y, radius);
-        velocity = new Vector2(200, 200);
+        velocity = new Vector2(); // A velocidade será definida pelas classes filhas
     }
 
     public void update(float delta) {

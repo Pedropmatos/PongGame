@@ -13,7 +13,7 @@ public class CollisionHandler {
             ball.reverseX();
 
             if (ball.velocity.len() < Constants.MAX_BALL_SPEED) {
-                ball.velocity.scl(Constants.BALL_SPEED_INCREASE_FACTOR); // Multiplica o vetor de velocidade pelo fator
+                ball.velocity.scl(Constants.BALL_SPEED_INCREASE_FACTOR);
             }
         }
     }
@@ -22,13 +22,13 @@ public class CollisionHandler {
         // Colisão com o teto
         if (ball.bounds.y + ball.bounds.radius >= Constants.SCREEN_HEIGHT) {
             ball.reverseY();
-            ball.bounds.y = Constants.SCREEN_HEIGHT - ball.bounds.radius; // Corrige posição
+            ball.bounds.y = Constants.SCREEN_HEIGHT - ball.bounds.radius;
         }
 
         // Colisão com o chão
         if (ball.bounds.y - ball.bounds.radius <= 0) {
             ball.reverseY();
-            ball.bounds.y = ball.bounds.radius; // Corrige posição
+            ball.bounds.y = ball.bounds.radius;
         }
     }
 }
