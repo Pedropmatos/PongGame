@@ -17,8 +17,14 @@ import com.pingpong.pong.utils.Constants;
 import com.pingpong.pong.logic.GameScore;
 import com.pingpong.pong.logic.ScoreDisplay;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class GameScreen implements Screen {
+
+    Texture backgroundTexture;
+    TextureRegion backgroundTextureRegion;
+
     ShapeRenderer shapeRenderer;
     Paddle player1;
     Paddle player2;
@@ -33,6 +39,26 @@ public class GameScreen implements Screen {
     private boolean gameOver;
     private String winnerMessage;
     private GlyphLayout layout;
+    private int currentLevel;
+
+    private float countdownTimer;
+    private boolean gameStarted;
+    private BitmapFont countdownFont;
+
+    public GameScreen(int level) {
+
+        if (level == 1) {
+            this.ballFactory = new DefaultBallFactory();
+        } else if (level == 2) {
+            this.ballFactory = new FastBallFactory();
+        } else {
+            this.ballFactory = new DefaultBallFactory();
+        }
+    }
+
+    public GameScreen() {
+        this(1);
+    }
 
     @Override
     public void show() {
@@ -41,12 +67,17 @@ public class GameScreen implements Screen {
         player2 = new Paddle(Constants.SCREEN_WIDTH - 30 - Constants.PADDLE_WIDTH,
             Constants.SCREEN_HEIGHT / 2f - Constants.PADDLE_HEIGHT / 2f, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT);
 
-        this.ballFactory = new FastBallFactory();
+        backgroundTexture = new Texture(Gdx.files.internal("pexels-francesco-ungaro-998641.jpg")); // Replace "background.png" with your image file
+        backgroundTextureRegion = new TextureRegion(backgroundTexture);
+
+        this.ballFactory = new DefaultBallFactory();
 
         ball = ballFactory.createBall(Constants.SCREEN_WIDTH / 2f, Constants.SCREEN_HEIGHT / 2f, Constants.BALL_RADIUS);
 
         batch = new SpriteBatch();
-        font = new BitmapFont();
+
+        font = new BitmapFont(Gdx.files.classpath("default.fnt"));
+
         font.getData().setScale(2);
 
         gameScore = new GameScore();
@@ -56,6 +87,12 @@ public class GameScreen implements Screen {
         gameOver = false;
         winnerMessage = "";
         layout = new GlyphLayout();
+
+        countdownTimer = 3.0f;
+        gameStarted = false;
+        countdownFont = new BitmapFont();
+        countdownFont.getData().setScale(4);
+
     }
 
     @Override
@@ -64,6 +101,10 @@ public class GameScreen implements Screen {
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+        batch.draw(backgroundTextureRegion, 0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+        batch.end();
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
@@ -84,7 +125,7 @@ public class GameScreen implements Screen {
 
         shapeRenderer.setColor(1, 1, 1, 1);
 
-        if (!gameOver) {
+        if (gameStarted && !gameOver) {
             ball.render(shapeRenderer);
         }
 
@@ -94,15 +135,40 @@ public class GameScreen implements Screen {
 
 
         if (gameOver) {
-            batch.begin();
-            layout.setText(font, winnerMessage);
-            float textWidth = layout.width;
-            font.draw(batch, winnerMessage, Constants.SCREEN_WIDTH / 2f - textWidth / 2f, Constants.SCREEN_HEIGHT / 2f);
-            batch.end();
-        }
+               batch.begin();
+               layout.setText(font, winnerMessage);
+                 float textWidth = layout.width;
+                font.draw(batch, winnerMessage, Constants.SCREEN_WIDTH / 2f - textWidth / 2f, Constants.SCREEN_HEIGHT / 2f);
+                batch.end();
+             }
+
+             if (!gameStarted && countdownTimer > 0) {
+                batch.begin();
+                countdownFont.setColor(1, 1, 1, 1);
+                String countdownText = String.valueOf((int) Math.ceil(countdownTimer));
+                layout.setText(countdownFont, countdownText);
+                float textX = Constants.SCREEN_WIDTH / 2f - layout.width / 2f;
+                float textY = Constants.SCREEN_HEIGHT / 2f + layout.height / 2f;
+                countdownFont.draw(batch, countdownText, textX, textY);
+                batch.end();
+             } else if (gameOver) {
+                 batch.begin();
+                 layout.setText(font, winnerMessage);
+                 float textWidth = layout.width;
+                 font.draw(batch, winnerMessage, Constants.SCREEN_WIDTH / 2f - textWidth / 2f, Constants.SCREEN_HEIGHT / 2f);
+                batch.end();
+             }
     }
 
     public void update(float delta) {
+        if (!gameStarted) {
+            countdownTimer -= delta;
+            if (countdownTimer <= 0) {
+                gameStarted = true;
+            }
+            return;
+        }
+
         if (gameOver) {
             return;
         }
@@ -191,5 +257,7 @@ public class GameScreen implements Screen {
         shapeRenderer.dispose();
         batch.dispose();
         font.dispose();
+
+        backgroundTexture.dispose();
     }
 }

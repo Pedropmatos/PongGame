@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.pingpong.pong.PongGame; // Importa a classe principal do jogo para acesso ao setScreen
+import com.pingpong.pong.PongGame;
 
 public class MenuScreen implements Screen {
 
@@ -85,12 +85,10 @@ public class MenuScreen implements Screen {
 
     @Override
     public void pause() {
-        // Pausa a tela
     }
 
     @Override
     public void resume() {
-        // Retoma a tela
     }
 
     @Override
@@ -100,7 +98,6 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        // Libera os recursos quando a tela não é mais necessária
         batch.dispose();
         font.dispose();
         shapeRenderer.dispose();

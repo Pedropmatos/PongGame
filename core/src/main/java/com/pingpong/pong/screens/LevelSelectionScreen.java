@@ -23,7 +23,6 @@ public class LevelSelectionScreen implements Screen {
     private List<LevelButton> levelButtons;
     private GlyphLayout layout;
 
-    // Classe interna para representar um botão de fase
     private static class LevelButton {
         public Rectangle bounds;
         public String text;
@@ -44,17 +43,15 @@ public class LevelSelectionScreen implements Screen {
     public void show() {
         batch = new SpriteBatch();
         font = new BitmapFont();
-        font.getData().setScale(1.5f); // Tamanho da fonte para os botões de fase
+        font.getData().setScale(1.5f);
         shapeRenderer = new ShapeRenderer();
         layout = new GlyphLayout();
 
         levelButtons = new ArrayList<>();
-        // Definir as fases disponíveis e criar os botões
-        // Exemplo: 3 fases
         int numberOfLevels = 3;
         float buttonWidth = 180;
         float buttonHeight = 70;
-        float padding = 20; // Espaçamento entre os botões
+        float padding = 20;
 
         float totalHeight = (buttonHeight * numberOfLevels) + (padding * (numberOfLevels - 1));
         float startY = (Gdx.graphics.getHeight() / 2f) + (totalHeight / 2f) - buttonHeight;
@@ -91,7 +88,6 @@ public class LevelSelectionScreen implements Screen {
         batch.end();
         shapeRenderer.end();
 
-        // Verifica se algum botão de fase foi clicado
         if (Gdx.input.justTouched()) {
             float touchX = Gdx.input.getX();
             float touchY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Inverte a coordenada Y

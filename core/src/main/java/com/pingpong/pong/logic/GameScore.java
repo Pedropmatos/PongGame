@@ -20,11 +20,6 @@ public class GameScore implements ScoreSubject {
     }
 
     @Override
-    public void removeObserver(ScoreObserver observer) {
-        observers.remove(observer);
-    }
-
-    @Override
     public void notifyObservers(int player1Score, int player2Score) {
         for (ScoreObserver observer : observers) {
             observer.updateScore(player1Score, player2Score);
