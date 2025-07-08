@@ -2,28 +2,32 @@ package com.pingpong.pong.levels;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.pingpong.pong.entities.Ball;
 import com.pingpong.pong.logic.BallFactory;
 import com.pingpong.pong.logic.DefaultBallFactory;
-import com.pingpong.pong.utils.Constants;
 import java.util.Iterator;
 
 public class ForestLevel extends Level {
 
     private Texture background;
+    private Texture leafTexture; // Textura para a imagem da folha
     private float leafSpawnTimer;
-    private final float leafSpawnInterval = 20.0f;
+
+    // CORREÇÃO: Frequência diminuída. Aumente este valor para mais tempo entre as folhas.
+    private final float leafSpawnInterval = 2.8f;
     private final float leafSpeed = 100f;
-    private final float LEAF_WIDTH = 30;
-    private final float LEAF_HEIGHT = 30;
+    private final float LEAF_WIDTH = 25; // Tamanho ajustado para a imagem
+    private final float LEAF_HEIGHT = 25;
 
     public ForestLevel() {
-        // CORREÇÃO: O caminho agora está correto, sem o prefixo "assets/"
         this.background = new Texture(Gdx.files.internal("forest_background.jpg"));
+        this.leafTexture = new Texture(Gdx.files.internal("leaf.png")); // Carrega a imagem da folha
         this.leafSpawnTimer = leafSpawnInterval;
     }
 
@@ -34,7 +38,7 @@ public class ForestLevel extends Level {
 
     @Override
     public float getInitialBallSpeed() {
-        return 300f;
+        return 220f;
     }
 
     @Override
@@ -58,8 +62,11 @@ public class ForestLevel extends Level {
 
         leafSpawnTimer -= delta;
         if (leafSpawnTimer <= 0) {
-            float leafX = Constants.SCREEN_WIDTH / 2f - LEAF_WIDTH / 2f;
-            fallingLeaves.add(new Rectangle(leafX, Constants.SCREEN_HEIGHT, LEAF_WIDTH, LEAF_HEIGHT));
+            float minX = 50; // Limite esquerdo
+            float maxX = 600 - LEAF_WIDTH; // Limite direito
+            float leafX = MathUtils.random(minX, maxX);
+
+            fallingLeaves.add(new Rectangle(leafX, 480, LEAF_WIDTH, LEAF_HEIGHT));
             leafSpawnTimer = leafSpawnInterval;
         }
 
@@ -78,12 +85,12 @@ public class ForestLevel extends Level {
     }
 
     @Override
-    public void render(ShapeRenderer shapeRenderer, Array<Rectangle> fallingLeaves) {
+    public void render(ShapeRenderer shapeRenderer, SpriteBatch batch, Array<Rectangle> fallingLeaves) {
         if (fallingLeaves == null) return;
-        
-        shapeRenderer.setColor(0.6f, 0.4f, 0.2f, 1);
+
+        // Usa o SpriteBatch para desenhar a textura da folha
         for (Rectangle leaf : fallingLeaves) {
-            shapeRenderer.rect(leaf.x, leaf.y, leaf.width, leaf.height);
+            batch.draw(leafTexture, leaf.x, leaf.y, leaf.width, leaf.height);
         }
     }
 
@@ -91,6 +98,9 @@ public class ForestLevel extends Level {
     public void dispose() {
         if (background != null) {
             background.dispose();
+        }
+        if (leafTexture != null) {
+            leafTexture.dispose(); // Libera a textura da folha
         }
     }
 }

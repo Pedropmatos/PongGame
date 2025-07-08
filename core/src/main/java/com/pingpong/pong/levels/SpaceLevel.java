@@ -2,6 +2,7 @@ package com.pingpong.pong.levels;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch; // <-- A LINHA QUE FALTAVA
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
@@ -14,7 +15,6 @@ public class SpaceLevel extends Level {
     private Texture background;
 
     public SpaceLevel() {
-        // CORREÇÃO: O caminho agora está correto, sem o prefixo "assets/"
         this.background = new Texture(Gdx.files.internal("space_background.jpg"));
     }
 
@@ -25,7 +25,7 @@ public class SpaceLevel extends Level {
 
     @Override
     public float getInitialBallSpeed() {
-        return 400f;
+        return 300f;
     }
 
     @Override
@@ -49,10 +49,10 @@ public class SpaceLevel extends Level {
     }
 
     @Override
-    public void render(ShapeRenderer shapeRenderer, Array<Rectangle> fallingLeaves) {
+    public void render(ShapeRenderer shapeRenderer, SpriteBatch batch, Array<Rectangle> fallingLeaves) {
         // Nenhuma lógica de renderização específica para este nível
     }
-    
+
     @Override
     public void dispose() {
         if (background != null) {

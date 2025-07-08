@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array; // <-- Import correto e definitivo
+import com.badlogic.gdx.utils.Array;
 import com.pingpong.pong.PongGame;
 import com.pingpong.pong.entities.Ball;
 import com.pingpong.pong.entities.Paddle;
@@ -42,7 +42,7 @@ public class GameScreen implements Screen {
 
     private Level currentLevel;
     private Texture backgroundTexture;
-    private Array<Rectangle> fallingLeaves; // <-- Tipo de dado correto
+    private Array<Rectangle> fallingLeaves; // Lista para guardar as folhas
 
     public GameScreen(PongGame game, int level) {
         this.game = game;
@@ -75,8 +75,9 @@ public class GameScreen implements Screen {
 
         batch = new SpriteBatch();
 
+        // Inicializa a lista de folhas apenas se for o ForestLevel
         if (currentLevel instanceof ForestLevel) {
-            fallingLeaves = new Array<>(); // Inicialização correta
+            fallingLeaves = new Array<>();
         } else {
             fallingLeaves = null;
         }
@@ -120,7 +121,8 @@ public class GameScreen implements Screen {
         clampPaddleToScreen(player2);
 
         ball.update(delta);
-        
+
+        // Chama a atualização do nível, passando a bola e as folhas
         currentLevel.update(delta, ball, fallingLeaves);
 
         CollisionHandler.handleBallPaddleCollision(ball, player1);
@@ -146,14 +148,25 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // --- Início da Renderização com SpriteBatch (para texturas) ---
+        batch.begin();
+
+        // Desenha o fundo
         if (backgroundTexture != null) {
-            batch.begin();
             batch.draw(backgroundTexture, 0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
-            batch.end();
         }
 
+        // Chama a renderização do nível para desenhar as folhas (que usam SpriteBatch)
+        currentLevel.render(null, batch, fallingLeaves);
+
+        batch.end();
+        // --- Fim da Renderização com SpriteBatch ---
+
+
+        // --- Início da Renderização com ShapeRenderer (para formas) ---
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
+        // Define a cor da linha do meio
         if (currentLevel instanceof ForestLevel) {
             shapeRenderer.setColor(0.8f, 0.8f, 0.8f, 1);
         } else if (currentLevel instanceof SpaceLevel) {
@@ -162,21 +175,23 @@ public class GameScreen implements Screen {
             shapeRenderer.setColor(1, 1, 1, 1);
         }
 
+        // Desenha a linha do meio
         for (int y = 0; y < Constants.SCREEN_HEIGHT; y += 30) {
             if (y % 60 == 0) {
                 shapeRenderer.rectLine(Constants.SCREEN_WIDTH / 2f, y, Constants.SCREEN_WIDTH / 2f, y + 15, 2);
             }
         }
+
+        // Desenha as bordas
         shapeRenderer.rectLine(0, 0, 0, Constants.SCREEN_HEIGHT, 4);
         shapeRenderer.rectLine(Constants.SCREEN_WIDTH, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, 4);
 
+        // Desenha as raquetes e a bola
         shapeRenderer.setColor(1, 0, 0, 1);
         player1.render(shapeRenderer);
 
         shapeRenderer.setColor(0, 0, 1, 1);
         player2.render(shapeRenderer);
-
-        currentLevel.render(shapeRenderer, fallingLeaves);
 
         shapeRenderer.setColor(1, 1, 1, 1);
         if (!gameOver) {
@@ -184,7 +199,10 @@ public class GameScreen implements Screen {
         }
 
         shapeRenderer.end();
+        // --- Fim da Renderização com ShapeRenderer ---
 
+
+        // Renderiza o placar e a mensagem de fim de jogo
         scoreDisplay.render();
 
         if (gameOver) {

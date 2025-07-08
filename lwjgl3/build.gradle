@@ -42,11 +42,21 @@ dependencies {
 def os = System.properties['os.name'].toLowerCase()
 
 run {
-  workingDir = rootProject.file('assets').path
-// You can uncomment the next line if your IDE claims a build failure even when the app closed properly.
-  //setIgnoreExitValue(true)
+    ignoreExitValue = true
+    mainClass.set(application.mainClass)
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir = file("../core/assets")
+    standardInput = System.in
 
-  if (os.contains('mac')) jvmArgs += "-XstartOnFirstThread"
+    // Define os argumentos base da JVM
+    def jvmArgsList = ['-Xms512M', '-Xmx1G']
+
+    // Adiciona o argumento -XstartOnFirstThread apenas se o sistema for macOS
+    if (System.getProperty('os.name').toLowerCase().contains('mac')) {
+        jvmArgsList.add('-XstartOnFirstThread')
+    }
+
+    jvmArgs = jvmArgsList
 }
 
 jar {

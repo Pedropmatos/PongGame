@@ -1,9 +1,10 @@
 package com.pingpong.pong.levels;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array; // <-- Import correto e definitivo
+import com.badlogic.gdx.utils.Array;
 import com.pingpong.pong.entities.Ball;
 import com.pingpong.pong.logic.BallFactory;
 import com.pingpong.pong.logic.DefaultBallFactory;
@@ -17,7 +18,7 @@ public class DefaultLevel extends Level {
 
     @Override
     public float getInitialBallSpeed() {
-        return 200f;
+        return 150f;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class DefaultLevel extends Level {
     }
 
     @Override
-    public void render(ShapeRenderer shapeRenderer, Array<Rectangle> fallingLeaves) {
+    public void render(ShapeRenderer shapeRenderer, SpriteBatch batch, Array<Rectangle> fallingLeaves) {
         // Nenhuma lógica de renderização específica para este nível
     }
 
