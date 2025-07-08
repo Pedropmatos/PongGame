@@ -10,5 +10,5 @@ public class Constants {
     public static final float BALL_SPEED_INCREASE_FACTOR = 1.02f;
     public static final float MAX_BALL_SPEED = 800f;
 
-    public static final int MAX_SCORE = 10;
+    public static int MAX_SCORE = 10; // "final" foi removido
 }
