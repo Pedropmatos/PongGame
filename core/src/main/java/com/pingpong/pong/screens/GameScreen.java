@@ -67,7 +67,7 @@ public class GameScreen implements Screen {
         player2 = new Paddle(Constants.SCREEN_WIDTH - 30 - Constants.PADDLE_WIDTH,
             Constants.SCREEN_HEIGHT / 2f - Constants.PADDLE_HEIGHT / 2f, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT);
 
-        backgroundTexture = new Texture(Gdx.files.internal("pexels-francesco-ungaro-998641.jpg")); // Replace "background.png" with your image file
+        backgroundTexture = new Texture(Gdx.files.internal("pexels-francesco-ungaro-998641.jpg"));
         backgroundTextureRegion = new TextureRegion(backgroundTexture);
 
         this.ballFactory = new DefaultBallFactory();
