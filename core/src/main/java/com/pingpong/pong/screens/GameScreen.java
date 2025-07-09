@@ -7,15 +7,19 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import com.pingpong.pong.entities.Ball;
 import com.pingpong.pong.entities.Paddle;
+import com.pingpong.pong.levels.DefaultLevel;
+import com.pingpong.pong.levels.ForestLevel;
+import com.pingpong.pong.levels.Level;
+import com.pingpong.pong.levels.SpaceLevel;
 import com.pingpong.pong.logic.BallFactory;
 import com.pingpong.pong.logic.CollisionHandler;
-import com.pingpong.pong.logic.DefaultBallFactory;
-import com.pingpong.pong.logic.FastBallFactory;
-import com.pingpong.pong.utils.Constants;
 import com.pingpong.pong.logic.GameScore;
 import com.pingpong.pong.logic.ScoreDisplay;
+import com.pingpong.pong.utils.Constants;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -39,60 +43,69 @@ public class GameScreen implements Screen {
     private boolean gameOver;
     private String winnerMessage;
     private GlyphLayout layout;
-    private int currentLevel;
 
     private float countdownTimer;
     private boolean gameStarted;
     private BitmapFont countdownFont;
 
-    public GameScreen(int level) {
+    // Variáveis de Nível
+    private Level level;
+    private Array<Rectangle> fallingLeaves;
 
-        if (level == 1) {
-            this.ballFactory = new DefaultBallFactory();
-        } else if (level == 2) {
-            this.ballFactory = new FastBallFactory();
+    public GameScreen(int level) {
+        if (level == 2) {
+            this.level = new ForestLevel();
+        } else if (level == 3) {
+            this.level = new SpaceLevel();
         } else {
-            this.ballFactory = new DefaultBallFactory();
+            this.level = new DefaultLevel();
         }
     }
 
     public GameScreen() {
-        this(1);
+        this(1); // Construtor padrão carrega o nível 1
     }
 
     @Override
     public void show() {
         shapeRenderer = new ShapeRenderer();
+        batch = new SpriteBatch();
+        font = new BitmapFont(Gdx.files.classpath("default.fnt"));
+        font.getData().setScale(2);
+        layout = new GlyphLayout();
+
+        // Inicializa entidades e lógica do jogo
         player1 = new Paddle(30, Constants.SCREEN_HEIGHT / 2f - Constants.PADDLE_HEIGHT / 2f, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT);
         player2 = new Paddle(Constants.SCREEN_WIDTH - 30 - Constants.PADDLE_WIDTH,
             Constants.SCREEN_HEIGHT / 2f - Constants.PADDLE_HEIGHT / 2f, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT);
-
-        backgroundTexture = new Texture(Gdx.files.internal("pexels-francesco-ungaro-998641.jpg"));
-        backgroundTextureRegion = new TextureRegion(backgroundTexture);
-
-        this.ballFactory = new DefaultBallFactory();
-
-        ball = ballFactory.createBall(Constants.SCREEN_WIDTH / 2f, Constants.SCREEN_HEIGHT / 2f, Constants.BALL_RADIUS);
-
-        batch = new SpriteBatch();
-
-        font = new BitmapFont(Gdx.files.classpath("default.fnt"));
-
-        font.getData().setScale(2);
 
         gameScore = new GameScore();
         scoreDisplay = new ScoreDisplay(batch, font);
         gameScore.addObserver(scoreDisplay);
 
+        // Configurações baseadas no nível
+        ballFactory = level.getBallFactory();
+        player1.speed = level.getPaddleSpeed();
+        player2.speed = level.getPaddleSpeed();
+        Constants.MAX_SCORE = level.getMaxScore();
+        ball = ballFactory.createBall(Constants.SCREEN_WIDTH / 2f, Constants.SCREEN_HEIGHT / 2f, Constants.BALL_RADIUS);
+
+        Texture bg = level.getBackground();
+        if (bg != null) {
+            backgroundTexture = bg;
+        } else {
+            backgroundTexture = new Texture(Gdx.files.internal("pexels-francesco-ungaro-998641.jpg"));
+        }
+        backgroundTextureRegion = new TextureRegion(backgroundTexture);
+
+        fallingLeaves = new Array<>();
+
         gameOver = false;
         winnerMessage = "";
-        layout = new GlyphLayout();
-
         countdownTimer = 3.0f;
         gameStarted = false;
         countdownFont = new BitmapFont();
         countdownFont.getData().setScale(4);
-
     }
 
     @Override
@@ -106,58 +119,54 @@ public class GameScreen implements Screen {
         batch.draw(backgroundTextureRegion, 0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
         batch.end();
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        batch.begin();
+        level.render(shapeRenderer, batch, fallingLeaves);
+        batch.end();
 
+        // Desenha os elementos do jogo com ShapeRenderer
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        // Linha do meio
         for (int y = 0; y < Constants.SCREEN_HEIGHT; y += 30) {
             if (y % 60 == 0) {
                 shapeRenderer.rectLine(Constants.SCREEN_WIDTH / 2f, y, Constants.SCREEN_WIDTH / 2f, y + 15, 2);
             }
         }
-
+        // Bordas
         shapeRenderer.rectLine(0, 0, 0, Constants.SCREEN_HEIGHT, 4);
         shapeRenderer.rectLine(Constants.SCREEN_WIDTH, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, 4);
 
+        // Raquetes e Bola
         shapeRenderer.setColor(1, 0, 0, 1);
         player1.render(shapeRenderer);
-
         shapeRenderer.setColor(0, 0, 1, 1);
         player2.render(shapeRenderer);
-
         shapeRenderer.setColor(1, 1, 1, 1);
-
         if (gameStarted && !gameOver) {
             ball.render(shapeRenderer);
         }
-
         shapeRenderer.end();
 
+        // Renderiza o placar e outras informações de texto
         scoreDisplay.render();
 
-
         if (gameOver) {
-               batch.begin();
-               layout.setText(font, winnerMessage);
-                 float textWidth = layout.width;
-                font.draw(batch, winnerMessage, Constants.SCREEN_WIDTH / 2f - textWidth / 2f, Constants.SCREEN_HEIGHT / 2f);
-                batch.end();
-             }
+            batch.begin();
+            layout.setText(font, winnerMessage);
+            float textWidth = layout.width;
+            font.draw(batch, winnerMessage, Constants.SCREEN_WIDTH / 2f - textWidth / 2f, Constants.SCREEN_HEIGHT / 2f);
+            batch.end();
+        }
 
-             if (!gameStarted && countdownTimer > 0) {
-                batch.begin();
-                countdownFont.setColor(1, 1, 1, 1);
-                String countdownText = String.valueOf((int) Math.ceil(countdownTimer));
-                layout.setText(countdownFont, countdownText);
-                float textX = Constants.SCREEN_WIDTH / 2f - layout.width / 2f;
-                float textY = Constants.SCREEN_HEIGHT / 2f + layout.height / 2f;
-                countdownFont.draw(batch, countdownText, textX, textY);
-                batch.end();
-             } else if (gameOver) {
-                 batch.begin();
-                 layout.setText(font, winnerMessage);
-                 float textWidth = layout.width;
-                 font.draw(batch, winnerMessage, Constants.SCREEN_WIDTH / 2f - textWidth / 2f, Constants.SCREEN_HEIGHT / 2f);
-                batch.end();
-             }
+        if (!gameStarted && countdownTimer > 0) {
+            batch.begin();
+            countdownFont.setColor(1, 1, 1, 1);
+            String countdownText = String.valueOf((int) Math.ceil(countdownTimer));
+            layout.setText(countdownFont, countdownText);
+            float textX = Constants.SCREEN_WIDTH / 2f - layout.width / 2f;
+            float textY = Constants.SCREEN_HEIGHT / 2f + layout.height / 2f;
+            countdownFont.draw(batch, countdownText, textX, textY);
+            batch.end();
+        }
     }
 
     public void update(float delta) {
@@ -173,6 +182,9 @@ public class GameScreen implements Screen {
             return;
         }
 
+        level.update(delta, ball, fallingLeaves);
+
+        // Controles dos jogadores
         boolean upP1 = Gdx.input.isKeyPressed(Keys.W);
         boolean downP1 = Gdx.input.isKeyPressed(Keys.S);
         player1.update(delta, upP1, downP1);
@@ -181,15 +193,17 @@ public class GameScreen implements Screen {
         boolean downP2 = Gdx.input.isKeyPressed(Keys.DOWN);
         player2.update(delta, upP2, downP2);
 
+        // Mantém as raquetes dentro da tela
         clampPaddleToScreen(player1);
         clampPaddleToScreen(player2);
 
+        // Lógica da bola
         ball.update(delta);
-
         CollisionHandler.handleBallPaddleCollision(ball, player1);
         CollisionHandler.handleBallPaddleCollision(ball, player2);
         CollisionHandler.handleBallWallCollision(ball);
 
+        // Verifica pontuação
         if (ball.bounds.x - ball.bounds.radius <= 0) {
             gameScore.player2Scores();
             checkWinCondition();
@@ -257,7 +271,8 @@ public class GameScreen implements Screen {
         shapeRenderer.dispose();
         batch.dispose();
         font.dispose();
-
+        countdownFont.dispose();
         backgroundTexture.dispose();
+        level.dispose(); // Libera recursos do nível
     }
 }

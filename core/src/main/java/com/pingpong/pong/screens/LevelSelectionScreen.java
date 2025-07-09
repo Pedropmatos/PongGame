@@ -59,7 +59,7 @@ public class LevelSelectionScreen implements Screen {
         for (int i = 0; i < numberOfLevels; i++) {
             float buttonX = Gdx.graphics.getWidth() / 2f - buttonWidth / 2f;
             float buttonY = startY - (i * (buttonHeight + padding));
-            String buttonText = "Fase " + (i + 1);
+            String buttonText = "Level " + (i + 1);
             levelButtons.add(new LevelButton(buttonX, buttonY, buttonWidth, buttonHeight, buttonText, i + 1));
         }
     }
@@ -69,26 +69,27 @@ public class LevelSelectionScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // 1. Desenha as formas (retângulos dos botões)
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.BLUE);
+        for (LevelButton button : levelButtons) {
+            shapeRenderer.rect(button.bounds.x, button.bounds.y, button.bounds.width, button.bounds.height);
+        }
+        shapeRenderer.end();
+
+        // 2. Desenha os textos sobre os botões
         batch.begin();
         font.setColor(Color.WHITE);
-
-        // Desenha cada botão de fase
         for (LevelButton button : levelButtons) {
-            shapeRenderer.setColor(Color.BLUE); // Cor dos botões de fase
-            shapeRenderer.rect(button.bounds.x, button.bounds.y, button.bounds.width, button.bounds.height);
-
-            // Desenha o texto do botão
             layout.setText(font, button.text);
             float textX = button.bounds.x + (button.bounds.width - layout.width) / 2;
             float textY = button.bounds.y + (button.bounds.height + layout.height) / 2;
             font.draw(batch, button.text, textX, textY);
         }
-
         batch.end();
-        shapeRenderer.end();
 
-        // Verifica se algum botão de fase foi clicado
+
+        // 3. Verifica se algum botão de fase foi clicado
         if (Gdx.input.justTouched()) {
             float touchX = Gdx.input.getX();
             float touchY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Inverte a coordenada Y
