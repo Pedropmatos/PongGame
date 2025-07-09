@@ -1,33 +1,53 @@
-# PingPong
+PingPong
+Bem-vindo ao PingPong! Um clássico jogo de Pong recriado com novas funcionalidades e diferentes fases para desafiar suas habilidades. Este projeto foi desenvolvido com a biblioteca libGDX.
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+Sobre o Jogo
+Este não é um Pong qualquer. Desafie um amigo em três níveis de dificuldade diferentes, cada um com suas próprias características e desafios. O jogo começa com um menu principal, seguido por uma tela de seleção de níveis, e então a ação começa!
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+Níveis
+Nível 1 (Padrão): A experiência clássica do Pong. Ideal para aquecer e para novos jogadores.
 
-## Platforms
+Nível 2 (Floresta): Desvie não só da bola, mas também de folhas que caem pela tela e podem alterar a trajetória da bola, tornando a partida imprevisível.
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
+Nível 3 (Espaço): Prepare-se para a velocidade! Neste nível, a bola é mais rápida, exigindo reflexos apurados em um cenário espacial.
 
-## Gradle
+Como Jogar
+O objetivo é simples: rebater a bola e fazer com que seu oponente não consiga devolvê-la. O primeiro jogador a atingir a pontuação máxima do nível vence a partida.
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+Controles
+Jogador 1 (Esquerda):
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+W - Mover para cima
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+S - Mover para baixo
+
+Jogador 2 (Direita):
+
+Seta para Cima - Mover para cima
+
+Seta para Baixo - Mover para baixo
+
+(Os controles são baseados no arquivo GameScreen.java).
+
+Plataformas Suportadas
+Desktop (LWJGL3): Jogue em seu computador Windows, macOS ou Linux.
+
+Como Executar o Projeto
+Este projeto utiliza o Gradle para gerenciar suas dependências e compilação. Você pode usar os seguintes comandos no terminal, na raiz do projeto:
+
+Executar o jogo:
+
+No Windows: gradlew.bat lwjgl3:run
+
+No macOS/Linux: ./gradlew lwjgl3:run
+
+Criar um arquivo .jar executável:
+
+Execute gradlew.bat lwjgl3:jar (Windows) ou ./gradlew lwjgl3:jar (macOS/Linux). O arquivo será gerado na pasta lwjgl3/build/libs.
+
+Outros Comandos Gradle Úteis
+clean: Remove as pastas build com os arquivos compilados.
+
+idea: Gera os arquivos de projeto para o IntelliJ IDEA.
+
+--refresh-dependencies: Força a validação e o download das dependências.
