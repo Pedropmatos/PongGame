@@ -1,4 +1,4 @@
-PingPong
+PINGA-NO-BINGA
 Bem-vindo ao PingPong! Um clássico jogo de Pong recriado com novas funcionalidades e diferentes fases para desafiar suas habilidades. Este projeto foi desenvolvido com a biblioteca libGDX.
 
 Sobre o Jogo
