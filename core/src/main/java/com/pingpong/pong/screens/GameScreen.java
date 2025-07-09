@@ -108,8 +108,6 @@ public class GameScreen implements Screen {
         Constants.MAX_SCORE = level.getMaxScore();
 
         // --- 5. CRIAÇÃO DA BOLA INICIAL ---
-        // Em vez de criar a bola aqui, chamamos o método resetBall que já faz isso.
-        // Isto centraliza a criação da bola e torna o código mais seguro.
         resetBall();
 
         // --- 6. CONFIGURAÇÃO FINAL ---

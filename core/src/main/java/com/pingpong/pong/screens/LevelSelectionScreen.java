@@ -51,7 +51,7 @@ public class LevelSelectionScreen implements Screen {
         int numberOfLevels = 3;
         float buttonWidth = 180;
         float buttonHeight = 70;
-        float padding = 20; // Espaçamento entre os botões
+        float padding = 20;
 
         float totalHeight = (buttonHeight * numberOfLevels) + (padding * (numberOfLevels - 1));
         float startY = (Gdx.graphics.getHeight() / 2f) + (totalHeight / 2f) - buttonHeight;
@@ -92,7 +92,7 @@ public class LevelSelectionScreen implements Screen {
         // 3. Verifica se algum botão de fase foi clicado
         if (Gdx.input.justTouched()) {
             float touchX = Gdx.input.getX();
-            float touchY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Inverte a coordenada Y
+            float touchY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
             for (LevelButton button : levelButtons) {
                 if (button.bounds.contains(touchX, touchY)) {

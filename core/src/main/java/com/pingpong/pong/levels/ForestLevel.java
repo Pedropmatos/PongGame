@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.pingpong.pong.entities.Ball;
 import com.pingpong.pong.logic.BallFactory;
-import com.pingpong.pong.logic.DefaultBallFactory; // Importante ter este import
+import com.pingpong.pong.logic.DefaultBallFactory;
 import java.util.Iterator;
 
 public class ForestLevel extends Level {
@@ -19,7 +19,7 @@ public class ForestLevel extends Level {
     private Texture background;
     private Texture leafTexture;
     private float leafSpawnTimer;
-    private final Sound leafHitSound; // Som da folha
+    private final Sound leafHitSound;
 
     private final float leafSpawnInterval = 2.8f;
     private final float leafSpeed = 100f;

@@ -15,7 +15,7 @@ public class CollisionHandler {
             if (ball.velocity.len() < Constants.MAX_BALL_SPEED) {
                 ball.velocity.scl(Constants.BALL_SPEED_INCREASE_FACTOR);
             }
-            hitSound.play(); // Toque o som da colisão
+            hitSound.play();
         }
     }
 

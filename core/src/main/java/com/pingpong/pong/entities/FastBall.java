@@ -6,6 +6,6 @@ public class FastBall extends Ball {
     public FastBall(float x, float y, float radius) {
         super(x, y, radius);
 
-        this.velocity = new Vector2(400, 400);
+        this.velocity = new Vector2(350, 350);
     }
 }

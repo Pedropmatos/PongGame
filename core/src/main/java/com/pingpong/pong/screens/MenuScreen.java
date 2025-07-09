@@ -13,14 +13,13 @@ import com.pingpong.pong.PongGame;
 
 public class MenuScreen implements Screen {
 
-    private PongGame game; // Referência ao objeto Game principal
+    private PongGame game;
     private SpriteBatch batch;
     private BitmapFont font;
     private ShapeRenderer shapeRenderer;
     private Rectangle playButtonBounds;
     private GlyphLayout layout;
 
-    // Construtor que recebe a instância do jogo
     public MenuScreen(PongGame game) {
         this.game = game;
     }
@@ -29,7 +28,7 @@ public class MenuScreen implements Screen {
     public void show() {
         batch = new SpriteBatch();
         font = new BitmapFont();
-        font.getData().setScale(2); // Aumenta o tamanho da fonte
+        font.getData().setScale(2);
         shapeRenderer = new ShapeRenderer();
         layout = new GlyphLayout();
 
@@ -53,29 +52,26 @@ public class MenuScreen implements Screen {
         shapeRenderer.end();
 
         batch.begin();
-        font.setColor(Color.WHITE); // Cor do texto
+        font.setColor(Color.WHITE);
         layout.setText(font, "Play");
         float textX = playButtonBounds.x + (playButtonBounds.width - layout.width) / 2;
         float textY = playButtonBounds.y + (playButtonBounds.height + layout.height) / 2;
         font.draw(batch, "Play", textX, textY);
         batch.end();
 
-        // Verifica se o botão "Play" foi clicado
         if (Gdx.input.justTouched()) {
             float touchX = Gdx.input.getX();
-            float touchY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Inverte a coordenada Y para corresponder ao sistema de coordenadas do LibGDX
+            float touchY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
             if (playButtonBounds.contains(touchX, touchY)) {
-                // Se o botão "Play" foi clicado, transiciona para a tela de seleção de fases
-                game.setScreen(new LevelSelectionScreen(game)); // AGORA VAI PARA A TELA DE SELEÇÃO DE FASES
-                dispose(); // Libera os recursos da tela atual
+                game.setScreen(new LevelSelectionScreen(game));
+                dispose();
             }
         }
     }
 
     @Override
     public void resize(int width, int height) {
-        // Atualiza as posições e tamanhos dos elementos se a tela for redimensionada
         float buttonWidth = 150;
         float buttonHeight = 60;
         float buttonX = width / 2f - buttonWidth / 2f;
@@ -93,7 +89,6 @@ public class MenuScreen implements Screen {
 
     @Override
     public void hide() {
-        // Esconde a tela
     }
 
     @Override

@@ -38,16 +38,13 @@ public class DefaultLevel extends Level {
 
     @Override
     public void update(float delta, Ball ball, Array<Rectangle> fallingLeaves) {
-        // Nenhuma lógica de atualização específica para este nível
     }
 
     @Override
     public void render(ShapeRenderer shapeRenderer, SpriteBatch batch, Array<Rectangle> fallingLeaves) {
-        // Nenhuma lógica de renderização específica para este nível
     }
 
     @Override
     public void dispose() {
-        // Nada a liberar
     }
 }
