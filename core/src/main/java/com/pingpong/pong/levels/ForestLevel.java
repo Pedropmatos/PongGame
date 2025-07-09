@@ -1,6 +1,7 @@
 package com.pingpong.pong.levels;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -10,24 +11,25 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.pingpong.pong.entities.Ball;
 import com.pingpong.pong.logic.BallFactory;
-import com.pingpong.pong.logic.DefaultBallFactory;
+import com.pingpong.pong.logic.DefaultBallFactory; // Importante ter este import
 import java.util.Iterator;
 
 public class ForestLevel extends Level {
 
     private Texture background;
-    private Texture leafTexture; // Textura para a imagem da folha
+    private Texture leafTexture;
     private float leafSpawnTimer;
+    private final Sound leafHitSound; // Som da folha
 
-    // CORREÇÃO: Frequência diminuída. Aumente este valor para mais tempo entre as folhas.
     private final float leafSpawnInterval = 2.8f;
     private final float leafSpeed = 100f;
-    private final float LEAF_WIDTH = 25; // Tamanho ajustado para a imagem
+    private final float LEAF_WIDTH = 25;
     private final float LEAF_HEIGHT = 25;
 
     public ForestLevel() {
         this.background = new Texture(Gdx.files.internal("forest_background.jpg"));
-        this.leafTexture = new Texture(Gdx.files.internal("leaf.png")); // Carrega a imagem da folha
+        this.leafTexture = new Texture(Gdx.files.internal("leaf.png"));
+        this.leafHitSound = Gdx.audio.newSound(Gdx.files.internal("leafpilehit-107714.mp3"));
         this.leafSpawnTimer = leafSpawnInterval;
     }
 
@@ -62,8 +64,8 @@ public class ForestLevel extends Level {
 
         leafSpawnTimer -= delta;
         if (leafSpawnTimer <= 0) {
-            float minX = 50; // Limite esquerdo
-            float maxX = 600 - LEAF_WIDTH; // Limite direito
+            float minX = 50;
+            float maxX = 600 - LEAF_WIDTH;
             float leafX = MathUtils.random(minX, maxX);
 
             fallingLeaves.add(new Rectangle(leafX, 480, LEAF_WIDTH, LEAF_HEIGHT));
@@ -75,8 +77,9 @@ public class ForestLevel extends Level {
             Rectangle leaf = iterator.next();
             leaf.y -= leafSpeed * delta;
 
-            if (Intersector.overlaps(ball.bounds, leaf)) {
+            if (ball != null && Intersector.overlaps(ball.bounds, leaf)) {
                 ball.reverseY();
+                leafHitSound.play();
                 iterator.remove();
             } else if (leaf.y + leaf.height < 0) {
                 iterator.remove();
@@ -88,7 +91,6 @@ public class ForestLevel extends Level {
     public void render(ShapeRenderer shapeRenderer, SpriteBatch batch, Array<Rectangle> fallingLeaves) {
         if (fallingLeaves == null) return;
 
-        // Usa o SpriteBatch para desenhar a textura da folha
         for (Rectangle leaf : fallingLeaves) {
             batch.draw(leafTexture, leaf.x, leaf.y, leaf.width, leaf.height);
         }
@@ -96,11 +98,8 @@ public class ForestLevel extends Level {
 
     @Override
     public void dispose() {
-        if (background != null) {
-            background.dispose();
-        }
-        if (leafTexture != null) {
-            leafTexture.dispose(); // Libera a textura da folha
-        }
+        if (background != null) background.dispose();
+        if (leafTexture != null) leafTexture.dispose();
+        if (leafHitSound != null) leafHitSound.dispose();
     }
 }
