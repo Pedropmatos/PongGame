@@ -1,7 +1,5 @@
 package com.pingpong.pong;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-
 import com.badlogic.gdx.Game;
 import com.pingpong.pong.screens.GameScreen;
 import com.pingpong.pong.screens.MenuScreen;

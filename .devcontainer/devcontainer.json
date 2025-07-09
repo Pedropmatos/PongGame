@@ -1,0 +1,22 @@
+{
+  "name": "Java & Desktop-Lite",
+  "image": "mcr.microsoft.com/vscode/devcontainers/java:0-17",
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {},
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installGradle": "true",
+      "installMaven": "false"
+    }
+  },
+
+  "forwardPorts": [6080, 5901],
+
+  "postCreateCommand": "chmod +x ./gradlew",
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["vscjava.vscode-java-pack"]
+    }
+  }
+}
