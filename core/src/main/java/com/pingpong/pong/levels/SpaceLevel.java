@@ -56,11 +56,6 @@ public class SpaceLevel extends Level {
     }
 
     @Override
-    public float getInitialBallSpeed() {
-        return 300f;
-    }
-
-    @Override
     public float getPaddleSpeed() {
         return 400f;
     }

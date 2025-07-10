@@ -17,11 +17,6 @@ public class DefaultLevel extends Level {
     }
 
     @Override
-    public float getInitialBallSpeed() {
-        return 150f;
-    }
-
-    @Override
     public float getPaddleSpeed() {
         return 300f;
     }

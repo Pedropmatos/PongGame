@@ -96,10 +96,9 @@ public class LevelSelectionScreen implements Screen {
 
             for (LevelButton button : levelButtons) {
                 if (button.bounds.contains(touchX, touchY)) {
-                    // Transiciona para a GameScreen, passando o nível selecionado
                     game.setScreen(new GameScreen(button.level));
                     dispose();
-                    return; // Sai do loop após encontrar o botão clicado
+                    return;
                 }
             }
         }
@@ -107,7 +106,6 @@ public class LevelSelectionScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        // Recalcula as posições dos botões se a tela for redimensionada
         float buttonWidth = 180;
         float buttonHeight = 70;
         float padding = 20;

@@ -38,10 +38,6 @@ public class ForestLevel extends Level {
         return new DefaultBallFactory();
     }
 
-    @Override
-    public float getInitialBallSpeed() {
-        return 220f;
-    }
 
     @Override
     public float getPaddleSpeed() {

@@ -10,13 +10,11 @@ import com.pingpong.pong.logic.BallFactory;
 
 public abstract class Level {
     public abstract BallFactory getBallFactory();
-    public abstract float getInitialBallSpeed();
     public abstract float getPaddleSpeed();
     public abstract int getMaxScore();
     public abstract Texture getBackground();
     public abstract void update(float delta, Ball ball, Array<Rectangle> fallingLeaves);
 
-    // MÉTODO ATUALIZADO para receber o SpriteBatch
     public abstract void render(ShapeRenderer shapeRenderer, SpriteBatch batch, Array<Rectangle> fallingLeaves);
 
     public abstract void dispose();
