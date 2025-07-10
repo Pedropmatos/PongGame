@@ -98,7 +98,6 @@ public class GameScreen implements Screen {
         // --- 4. CONFIGURAÇÃO BASEADA NO NÍVEL (ORDEM CRÍTICA) ---
         this.ballFactory = level.getBallFactory();
 
-        // Adicionámos uma verificação de segurança. Se o erro persistir, a mensagem será mais clara.
         if (this.ballFactory == null) {
             throw new IllegalStateException("A BallFactory não pode ser nula. O nível " + level.getClass().getSimpleName() + " não a configurou corretamente.");
         }
